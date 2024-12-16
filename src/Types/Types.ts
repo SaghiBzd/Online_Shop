@@ -30,3 +30,10 @@ export interface User {
   };
   phone: string;
 }
+
+export interface SearchAndFilterProps {
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  categoryFilter: string;
+  setCategoryFilter: (category: string) => void;
+}
