@@ -5,6 +5,7 @@ import RootLayout from "./Components/RootLayout";
 import HomePage from "./Pages/HomePage";
 import UserDetailPage from "./Pages/UserDetailPage";
 import ShoppingCartPage from './Pages/ShoppingCartPage';
+import { CartProvider } from './Store/CartContext';
 import Products from './Components/Products';
 
 
