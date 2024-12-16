@@ -18,7 +18,7 @@ const router = createBrowserRouter([
 ]) 
 
 const App: React.FC = () => {
-  return <RouterProvider router={router}/>;
+  return <CartProvider><RouterProvider router={router}/></CartProvider>;
 };
 
 export default App;
