@@ -6,6 +6,9 @@ type CartItem = Product & { quantity: number };
 type CartContextType = {
   cart: CartItem[];
   addToCart: (product: Product) => void;
+  removeFromCart: (id: number) => void;
+  increaseQuantity: (id: number) => void;
+  decreaseQuantity: (id: number) => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -25,8 +28,32 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
+  const removeFromCart = useCallback((id: number) => {
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
+  const increaseQuantity = useCallback((id: number) => {
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  }, []);
+
+  const decreaseQuantity = useCallback((id: number) => {
+    setCart((prev) =>
+      prev
+        .map((item) =>
+          item.id === id && item.quantity > 1
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
+  }, []);
+
   return (
-    <CartContext.Provider value={{cart, addToCart}}>
+    <CartContext.Provider value={{cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity}}>
       {children}
     </CartContext.Provider>
   );
