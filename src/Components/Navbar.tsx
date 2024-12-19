@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import "../style.css";
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  totalQuantity: number;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ totalQuantity }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navButton = "text-md py-2 px-4 rounded-md hover:bg-green1 transition-colors duration-300";
@@ -17,8 +21,7 @@ const Navbar: React.FC = () => {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden text-white1 text-lg font-semibold focus:outline-none"
-            aria-label={isOpen ? 'Close menu' : 'Open menu'}
-          >
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}>
             {isOpen ? 'Close' : 'Menu'}
           </button>
 
@@ -39,6 +42,11 @@ const Navbar: React.FC = () => {
               <NavLink to="/cart"
                 className={({ isActive }) => `${navButton} ${isActive ? 'text-warm' : ''}`}>
                 Shopping Cart
+                {totalQuantity > 0 && (
+                  <span className="bg-green1 text-md text-white1 font-bold ml-2 px-2 py-1 rounded-full">
+                    {totalQuantity}
+                  </span>
+                )}
               </NavLink>
             </li>
             <li>
@@ -69,6 +77,11 @@ const Navbar: React.FC = () => {
                 <NavLink to="/cart"
                   className={({ isActive }) => `${navButtons} ${isActive ? 'text-warm' : ''}`}>
                   Shopping Cart
+                  {totalQuantity > 0 && (
+                    <span className="bg-green1 text-white1 font-bold ml-2 px-2 py-1 rounded-full">
+                      {totalQuantity}
+                    </span>
+                  )}
                 </NavLink>
               </li>
               <li>
@@ -83,6 +96,6 @@ const Navbar: React.FC = () => {
       </nav>
     </header>
   );
-}
+};
 
 export default Navbar;
