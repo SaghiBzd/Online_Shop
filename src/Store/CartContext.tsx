@@ -1,15 +1,5 @@
 import { createContext, useState, useContext, ReactNode, useCallback } from 'react';
-import { Product } from '../Types/Type';
-
-type CartItem = Product & { quantity: number };
-
-type CartContextType = {
-  cart: CartItem[];
-  addToCart: (product: Product) => void;
-  removeFromCart: (id: number) => void;
-  increaseQuantity: (id: number) => void;
-  decreaseQuantity: (id: number) => void;
-};
+import { Product, CartItem, CartContextType } from '../Types/Type';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -18,13 +8,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = useCallback((product: Product) => {
     setCart((prev) => {
-      const existingProduct = prev.find((item) => item.id === product.id);
+      const newCart = [...prev];
+      const existingProduct = newCart.find((item) => item.id === product.id);
+
       if (existingProduct) {
-        return prev.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
+        existingProduct.quantity += 1;
+      } else {
+        newCart.push({ ...product, quantity: 1 });
       }
-      return [...prev, { ...product, quantity: 1 }];
+
+      return newCart;
     });
   }, []);
 
@@ -33,27 +26,38 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const increaseQuantity = useCallback((id: number) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
+    setCart((prev) => {
+      const newCart = [...prev];
+      const targetItem = newCart.find((item) => item.id === id);
+
+      if (targetItem) {
+        targetItem.quantity += 1;
+      }
+
+      return newCart;
+    });
   }, []);
 
   const decreaseQuantity = useCallback((id: number) => {
-    setCart((prev) =>
-      prev
-        .map((item) =>
-          item.id === id && item.quantity > 1
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
+    setCart((prev) => {
+      const newCart = [...prev];
+      const targetItemIndex = newCart.findIndex((item) => item.id === id);
+
+      if (targetItemIndex !== -1) {
+        const targetItem = newCart[targetItemIndex];
+        if (targetItem.quantity > 1) {
+          targetItem.quantity -= 1;
+        } else {
+          newCart.splice(targetItemIndex, 1);
+        }
+      }
+
+      return newCart;
+    });
   }, []);
 
   return (
-    <CartContext.Provider value={{cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity}}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity }}>
       {children}
     </CartContext.Provider>
   );
